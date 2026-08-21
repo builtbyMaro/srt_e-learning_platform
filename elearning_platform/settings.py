@@ -43,8 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cloudinary',
     'cloudinary_storage',
-    'courses.apps.CoursesConfig',
-    'students.apps.StudentsConfig',
+    'main_app.apps.MainAppConfig',
 ]
 
 MIDDLEWARE = [
