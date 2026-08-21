@@ -90,6 +90,7 @@ class EnrolledCourse(models.Model):
     course = models.ForeignKey(Course, on_delete=models.PROTECT, related_name="enrollments")
     enrolled_at = models.DateTimeField(auto_now_add=True)
     last_accessed_at = models.DateTimeField(null=True, blank=True)
+    is_completed = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-last_accessed_at']
