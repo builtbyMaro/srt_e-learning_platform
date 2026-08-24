@@ -22,6 +22,10 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
+
 
 class Course(models.Model):
     instructor = models.ForeignKey(Profile, on_delete=models.PROTECT, related_name="courses")
@@ -112,6 +116,8 @@ class LessonProgress(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        verbose_name = "Lesson Progress"
+        verbose_name_plural = "Lesson Progress"
         constraints = [
             models.UniqueConstraint(
                 fields=["student", "lesson"],
