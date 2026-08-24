@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from .models import Profile
 from .utils import check_field_values
 
-# Create your views here.
 
 def home_view(request):
     return render(request, 'main_app/index.html')
@@ -43,4 +45,32 @@ def signup_view(request):
     return render(request, 'main_app/signup.html')
 
 def login_view(request):
-    return render(request, 'main_app/login.html')
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        if False in check_field_values([username, password]):
+            messages.error(request, "All fields are required")
+            return redirect("mainapp:login", permanent=True)
+
+        user=authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect("mainapp:dashboard")
+
+        messages.error(request, "invalid username or password")
+        return redirect("mainapp:login", permanent=True)
+
+    return render(request, "main_app/login.html")
+
+def logout_view(request):
+    logout(request)
+    return redirect("mainapp:login")
+
+@never_cache
+@login_required(login_url='mainapp:login')
+def dashboard(request):
+    if request.user.profile.is_instructor:
+        return render(request, "main_app/instructor/dashboard.html")
+    return render(request, "main_app/student/dashboard.html")
