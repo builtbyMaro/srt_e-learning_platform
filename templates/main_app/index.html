@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SRT Academy</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f4f6f8;
+      }
+
+      .container {
+        background-color: white;
+        padding: 50px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 400px;
+      }
+
+      .container h1 {
+        color: #1f2937;
+        font-size: 40px;
+        margin-bottom: 15px;
+      }
+
+      .container p {
+        color: #6b7280;
+        margin-bottom: 30px;
+        font-size: 18px;
+      }
+
+      .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+      }
+
+      .buttons a {
+        text-decoration: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: 0.3s;
+      }
+
+      .login-btn {
+        background-color: #1f2937;
+        color: white;
+      }
+
+      .signup-btn {
+        background-color: #e5e7eb;
+        color: #1f2937;
+      }
+
+      .buttons a:hover {
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>SRT ACADEMY</h1>
+
+      <p>Learn, grow and build your skills.</p>
+
+      <div class="buttons">
+        <a href="{% url 'mainapp:login' %}" class="login-btn"> Login </a>
+
+        <a href="{% url 'mainapp:signup' %}" class="signup-btn"> Sign Up </a>
+      </div>
+    </div>
+  </body>
+</html>

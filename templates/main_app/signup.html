@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signup | SRT ACADEMY</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f4f6f8;
+      }
+
+      .signup-container {
+        background-color: white;
+        width: 400px;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .signup-container h1 {
+        text-align: center;
+        color: #1f2937;
+        margin-bottom: 10px;
+      }
+
+      .signup-container p.subtitle {
+        text-align: center;
+        color: #6b7280;
+        margin-bottom: 30px;
+      }
+
+      .signup-container label {
+        display: block;
+        margin-bottom: 8px;
+        color: #374151;
+        font-size: 14px;
+      }
+
+      .signup-container input[type="text"],
+      .signup-container input[type="password"] {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        outline: none;
+        font-size: 16px;
+      }
+
+      .signup-container input[type="text"]:focus,
+      .signup-container input[type="password"]:focus {
+        border-color: #1f2937;
+      }
+
+      .instructor {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
+      .instructor label {
+        margin-bottom: 0px;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .instructor input {
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+      }
+
+      .messages {
+        margin-bottom: 20px;
+        color: orange;
+        text-align: center;
+      }
+
+      .signup-btn {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background-color: #1f2937;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .signup-btn:hover {
+        opacity: 0.85;
+      }
+
+      .login-link {
+        text-align: center;
+        margin-top: 25px;
+        color: #6b7280;
+      }
+
+      .login-link a {
+        color: #1f2937;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .login-link a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="signup-container">
+      <h1>SRT ACADEMY</h1>
+
+      <p class="subtitle">Create an account.</p>
+
+      <form action="{% url 'mainapp:signup' %}" method="post">
+
+        <label for="firstname"> First Name </label>
+
+        <input
+          type="text"
+          name="firstname"
+          id="firstname"
+          placeholder="John"
+        />
+
+        <label for="lastname"> Last Name </label>
+
+        <input
+          type="text"
+          name="lastname"
+          id="lastname"
+          placeholder="Doe"
+        />
+
+        <label for="username"> Username </label>
+
+        <input
+          type="text"
+          name="username"
+          id="username"
+          placeholder="Choose a username"
+        />
+
+        <label for="password"> Password </label>
+
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="Create a password"
+        />
+
+        <label for="password2"> Confirm Password </label>
+
+        <input
+          type="password"
+          name="password2"
+          id="password2"
+          placeholder="Confirm your password"
+        />
+
+        <span class="instructor">
+          <label for="is_instructor">Sign up as Instructor ?</label>
+          <input 
+            type="checkbox"
+            name="is_instructor"
+            id="is_instructor"
+          />
+        </span>
+
+        {% csrf_token %} {% if messages %}
+        <div class="messages">
+          {% for msg in messages %}
+          <small>{{ msg }}</small><br />
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <button type="submit" class="signup-btn">Create Account</button>
+      </form>
+
+      <p class="login-link">
+        Already have an account?
+        <a href="{% url 'mainapp:login' %}"> Login here </a>
+      </p>
+    </div>
+  </body>
+</html>
