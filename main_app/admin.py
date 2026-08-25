@@ -9,7 +9,7 @@ admin.site.index_title = "Welcome to SRT Academy Administration"
 
 @admin.register(models.Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    pass
+    list_filter = ['is_instructor']
 
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):

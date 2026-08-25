@@ -4,9 +4,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Value, IntegerField
+from django.core.paginator import Paginator
 
-from .models import Profile, EnrolledCourse, Course
+from .models import Profile, EnrolledCourse, Course, SavedCourse
 from .utils import check_field_values
 from .forms import UserUpdateForm, ProfileUpdateForm
 
@@ -60,7 +61,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect("mainapp:dashboard")
+            return redirect("mainapp:courses")
 
         messages.error(request, "invalid username or password")
         return redirect("mainapp:login", permanent=True)
@@ -71,11 +72,6 @@ def logout_view(request):
     logout(request)
     return redirect("mainapp:login")
 
-
-@never_cache
-@login_required(login_url="srtapp:login")
-def courses_view(request):
-    pass
 
 
 @never_cache
@@ -103,7 +99,7 @@ def dashboard(request):
 
 
 @never_cache
-@login_required(login_url="srtapp:login")
+@login_required(login_url="mainapp:login")
 def mycourses_view(request):
     queryset = EnrolledCourse.objects.filter(student__user_id=request.user.id).select_related('course')
 
@@ -120,7 +116,7 @@ def mycourses_view(request):
 
 
 @never_cache
-@login_required(login_url="srtapp:login")
+@login_required(login_url="mainapp:login")
 def settings_view(request):
     """
     Handles displaying the user's current info and updating their profile (First Name, Last Name, Email and Avatar) on form submission
@@ -158,3 +154,34 @@ def settings_view(request):
         "main_app/student/settings.html",
         context=context
     )
+
+
+@login_required(login_url="mainapp:login")
+def saved_courses_view(request):
+    saved_courses = SavedCourse.objects.filter(student=request.user.profile).all()
+
+    context = {
+        'saved_courses':saved_courses
+    }
+
+    return render(request, "main_app/student/saved_courses.html", context=context)
+
+@login_required(login_url="mainapp:login")
+def courses_view(request):
+    courses = Course.objects.filter(is_published=True).annotate(average_rating=Value(4, output_field=IntegerField()))
+
+    # Get only matches if user searches
+    if request.GET.get('q'):
+        search_query = request.GET.get('q')
+        courses = Course.objects.filter(title__icontains=search_query, is_published=True).annotate(average_rating=Value(4, output_field=IntegerField()))
+
+    paginator = Paginator(courses, 9)
+    page_number = request.GET.get("page")
+    page = paginator.get_page(page_number)
+
+    context = {
+        "courses": page,
+    }
+
+    return render(request, 'main_app/student/courses.html', context=context)
+

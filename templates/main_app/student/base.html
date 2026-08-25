@@ -252,6 +252,11 @@
                 My Courses
             </a>
 
+            <a href="{% url 'mainapp:saved_courses' %}"
+               class="sidebar-link {% if request.resolver_match.url_name == 'saved_courses' %}active{% endif %}">
+                Saved Courses
+            </a>
+
             <a href="{% url 'mainapp:settings' %}"
                class="sidebar-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
                 Settings

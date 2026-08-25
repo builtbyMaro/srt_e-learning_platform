@@ -1,0 +1,288 @@
+{% extends "main_app/student/base.html" %}
+
+{% block title %}Saved Courses | SRT Academy{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .page-header {
+        margin-bottom: 30px;
+    }
+
+    .page-header h1 {
+        color: #111827;
+        margin-bottom: 10px;
+    }
+
+    .page-header p {
+        color: #6b7280;
+        font-size: 17px;
+    }
+
+
+    /* Course Grid */
+
+    .course-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+
+
+    /* Course Card */
+
+    .course-card {
+        background-color: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-image {
+        width: 100%;
+        height: 180px;
+    }
+
+    .course-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .course-content {
+        padding: 20px;
+    }
+
+    .course-content h2 {
+        color: #111827;
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+
+    /* Rating */
+
+    .rating {
+        display: flex;
+        gap: 2px;
+        margin-bottom: 15px;
+    }
+
+    .star {
+        color: #d1d5db;
+        font-size: 18px;
+    }
+
+    .star.filled {
+        color: #f59e0b;
+    }
+
+
+    /* Categories */
+
+    .categories {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .category {
+        background-color: #e5e7eb;
+        color: #374151;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+    }
+
+
+    /* Button */
+
+    .course-btn {
+        display: inline-block;
+        background-color: #1f2937;
+        color: white;
+        text-decoration: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+    }
+
+    .course-btn:hover {
+        background-color: #374151;
+    }
+
+
+    /* No Saved Courses */
+
+    .no-courses {
+        background-color: white;
+        border-radius: 12px;
+        padding: 70px 20px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        text-align: center;
+
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .no-courses h2 {
+        color: #111827;
+        margin-bottom: 10px;
+    }
+
+    .no-courses p {
+        color: #6b7280;
+        margin-bottom: 25px;
+    }
+
+    .browse-btn {
+        display: inline-block;
+        background-color: #1f2937;
+        color: white;
+        text-decoration: none;
+        padding: 12px 22px;
+        border-radius: 8px;
+    }
+
+    .browse-btn:hover {
+        background-color: #374151;
+    }
+
+
+    /* Responsive */
+
+    @media (max-width: 900px) {
+
+        .course-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+    }
+
+    @media (max-width: 600px) {
+
+        .course-grid {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+</style>
+
+
+<div class="page-header">
+
+    <h1>Saved Courses</h1>
+
+    <p>
+        Courses you've saved for later.
+    </p>
+
+</div>
+
+
+{% if saved_courses %}
+
+    <div class="course-grid">
+
+        {% for course in saved_courses %}
+
+            <div class="course-card">
+
+                <div class="course-image">
+
+                    <img
+                        src="{{ course.cover_image.url }}"
+                        alt="{{ course.title }}"
+                    >
+
+                </div>
+
+
+                <div class="course-content">
+
+                    <h2>
+                        {{ course.title }}
+                    </h2>
+
+
+                    <div class="rating">
+
+                        {% for i in "12345" %}
+
+                            {% if forloop.counter <= course.average_rating %}
+
+                                <span class="star filled">★</span>
+
+                            {% else %}
+
+                                <span class="star">★</span>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    {% if course.categories.all %}
+
+                        <div class="categories">
+
+                            {% for category in course.categories.all %}
+
+                                <span class="category">
+                                    {{ category.name }}
+                                </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <a
+                        href="#"
+                        class="course-btn"
+                    >
+                        View Course
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <div class="no-courses">
+
+        <h2>
+            You don't have any saved courses.
+        </h2>
+
+        <p>
+            Browse our courses and save the ones you want to take later.
+        </p>
+
+        <a
+            href="{% url 'mainapp:courses' %}"
+            class="browse-btn"
+        >
+            Browse Courses
+        </a>
+
+    </div>
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Courses | SRT Academy</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f8;
+        }
+
+        /* Navbar */
+
+        .navbar {
+            height: 70px;
+            background-color: #1f2937;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+        }
+
+        .brand {
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: #374151;
+        }
+
+        .profile-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .profile-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: white;
+            color: #1f2937;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-weight: bold;
+            overflow: hidden;
+        }
+
+        .nav_avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 15px;
+        }
+
+
+        /* Main Content */
+
+        .courses-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: #6b7280;
+            font-size: 17px;
+        }
+
+
+        /* Search */
+
+        .search-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .search-form input {
+            flex: 1;
+            padding: 13px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-form input:focus {
+            border-color: #1f2937;
+        }
+
+        .search-btn {
+            background-color: #1f2937;
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .search-btn:hover {
+            background-color: #374151;
+        }
+
+
+        /* Course Grid */
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .course-card {
+        background-color: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-image {
+        width: 100%;
+        height: 180px;
+    }
+
+    .course-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .course-content {
+        padding: 20px;
+    }
+
+    .course-content h2 {
+        color: #111827;
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+
+    /* Rating */
+
+    .rating {
+        display: flex;
+        gap: 2px;
+        margin-bottom: 15px;
+    }
+
+    .star {
+        color: #d1d5db;
+        font-size: 18px;
+    }
+
+    .star.filled {
+        color: #f59e0b;
+    }
+
+
+    /* Categories */
+
+    .categories {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .category {
+        background-color: #e5e7eb;
+        color: #374151;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+    }
+
+
+    /* Button */
+
+    .course-btn {
+        display: inline-block;
+        background-color: #1f2937;
+        color: white;
+        text-decoration: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+    }
+
+    .course-btn:hover {
+        background-color: #374151;
+    }
+
+
+        /* No Results */
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .no-results h2 {
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .no-results p {
+            color: #6b7280;
+        }
+
+        /* Pagination */
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            min-width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0 14px;
+
+            background-color: white;
+            color: #1f2937;
+
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+
+            text-decoration: none;
+            font-size: 14px;
+
+            transition: background-color 0.2s;
+        }
+
+        .page-btn:hover {
+            background-color: #e5e7eb;
+        }
+
+        .active-page {
+            background-color: #1f2937;
+            color: white;
+            border-color: #1f2937;
+        }
+
+        .num-of-pages {
+            color: #111827;
+        }
+
+
+        /* Responsive */
+
+        @media (max-width: 900px) {
+
+            .course-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .profile-name {
+                display: none;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-btn {
+                padding: 13px;
+            }
+
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <!-- Navbar -->
+
+    <nav class="navbar">
+
+        <a href="" class="brand">
+            SRT ACADEMY
+        </a>
+
+        <div class="navbar-right">
+
+            <a href="{% url 'mainapp:courses' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'courses' %}active{% endif %}">
+                Courses
+            </a>
+
+            <a href="{% url 'mainapp:dashboard' %}" class="profile-link">
+
+                <span class="profile-icon">
+
+                    {% if request.user.profile.avatar %}
+
+                        <img
+                            src="{{ request.user.profile.avatar.url }}"
+                            alt="{{ request.user.username }}'s avatar"
+                            class="nav_avatar"
+                        >
+
+                    {% else %}
+
+                        {{ request.user.username|first|upper }}
+
+                    {% endif %}
+
+                </span>
+
+                <span class="profile-name">
+                    {{ request.user.username }}
+                </span>
+
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Main Content -->
+
+    <main class="courses-container">
+
+        <div class="page-header">
+
+            <h1>Explore Courses</h1>
+
+            <p>
+                Discover courses and start learning something new.
+            </p>
+
+        </div>
+
+
+        <!-- Search -->
+
+        <form method="GET" class="search-form">
+
+            <input
+                type="text"
+                name="q"
+                placeholder="Search courses..."
+                value="{{ request.GET.q }}"
+            >
+
+            <button type="submit" class="search-btn">
+                Search
+            </button>
+
+        </form>
+
+
+        <!-- Courses -->
+
+        {% if courses %}
+
+            <div class="course-grid">
+
+            {% for course in courses %}
+
+                <div class="course-card">
+
+                    <div class="course-image">
+                        <img
+                        src="{{ course.cover_image.url }}"
+                        alt="{{ course.title }}"
+                        >
+                    </div>
+
+                    <div class="course-content">
+
+                        <h2>{{ course.title }}</h2>
+
+                        {% if course.categories.all %}
+
+                        <div class="categories">
+
+                            {% for category in course.categories.all %}
+
+                            <span class="category">
+                                {{ category.name }}
+                            </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                        {% endif %}
+
+                         <div class="rating">
+
+                        {% for i in "12345" %}
+
+                        {% if forloop.counter <= course.average_rating %}
+                            <span class="star filled">★</span>
+                        {% else %}
+                            <span class="star">★</span>
+                        {% endif %}
+
+                        {% endfor %}
+
+                        </div>
+
+                        <a
+                            href="#"
+                            class="course-btn"
+                        >
+                            View Course
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+            </div>
+
+            <div class="pagination">
+                {% if courses.has_previous and request.GET.q %}
+                    <a href="?q={{ request.GET.q }}&page={{ courses.previous_page_number }}"
+                    class="page-btn"
+                    >
+                    Previous
+                    </a>
+                {% elif courses.has_previous %}
+                    <a href="?page={{ courses.previous_page_number }}"
+                    class="page-btn"
+                    >
+                    Previous
+                    </a>
+                {% endif %}
+
+                <span class="num-of-pages">
+                    Page {{ courses.number }} of {{ courses.paginator.num_pages }}
+                </span>
+
+                {% if courses.has_next and request.GET.q %}
+                    <a href="?q={{ request.GET.q }}&page={{ courses.next_page_number }}"
+                    class="page-btn"
+                    >
+                    Next
+                    </a>
+                {% elif courses.has_next %}
+                    <a href="?page={{ courses.next_page_number }}"
+                    class="page-btn"
+                    >
+                    Next
+                    </a>
+                {% endif %}
+            </div>
+
+        {% else %}
+
+            <div class="no-results">
+
+                {% if request.GET.q %}
+
+                    <h2>No courses found</h2>
+
+                    <p>
+                        No courses match "{{ request.GET.q }}".
+                    </p>
+
+                {% else %}
+
+                    <h2>No courses available yet</h2>
+
+                    <p>
+                        Check back later for new courses.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </main>
+
+</body>
+
+</html>
