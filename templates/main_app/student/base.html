@@ -1,0 +1,281 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}SRT Academy{% endblock %}</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #1f2937;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar {
+            height: 60px;
+            background-color: #1f2937;
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 40px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .brand {
+            color: white;
+            text-decoration: none;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            padding: 24px 0;
+            opacity: 0.8;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            opacity: 1;
+        }
+
+        /* =========================
+           PROFILE
+        ========================= */
+
+        .profile-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            color: white;
+            text-decoration: none;
+        }
+
+        .profile-icon {
+            width: 36px;
+            height: 36px;
+
+            background-color: white;
+            color: #1f2937;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .nav_avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .profile-name {
+            font-size: 15px;
+        }
+
+        /* =========================
+           DASHBOARD LAYOUT
+        ========================= */
+
+        .dashboard-layout {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 240px;
+            background-color: #1f2937;
+
+            display: flex;
+            flex-direction: column;
+
+            padding: 30px 15px;
+            position: fixed;
+            top: 60px;
+            bottom: 0;
+        }
+
+        .sidebar-link {
+            color: white;
+            text-decoration: none;
+
+            padding: 14px 20px;
+            margin-bottom: 5px;
+
+            border-radius: 6px;
+
+            font-size: 15px;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background-color: #374151;
+        }
+
+        .sidebar-link.active {
+            font-weight: 600;
+        }
+
+        .sidebar-link.logout {
+            margin-top: auto;
+        }
+
+        /* =========================
+           MAIN CONTENT
+        ========================= */
+
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            background-color: white;
+            margin-left: 240px;
+            overflow-y: auto;
+            margin-top: 60px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 700px) {
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .profile-name {
+                display: none;
+            }
+
+            .navbar-right {
+                gap: 20px;
+            }
+
+            .sidebar {
+                width: 190px;
+            }
+
+            .main-content {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+
+        <a href="" class="brand">
+            SRT ACADEMY
+        </a>
+
+        <div class="navbar-right">
+
+            <a href="{% url 'mainapp:courses' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'courses' %}active{% endif %}">
+                Courses
+            </a>
+
+            <a href="{% url 'mainapp:dashboard' %}" class="profile-link">
+
+                <span class="profile-icon">
+                    {% if request.user.profile.avatar %}
+                    <img src="{{request.user.profile.avatar.url}}" alt="{{request.user.username}}'s avatar" class="nav_avatar">
+                    {% else %}
+                    {{ request.user.username|first|upper }}
+                    {% endif %}
+                </span>
+
+                <span class="profile-name">
+                    {{ request.user.username }}
+                </span>
+
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Dashboard -->
+    <div class="dashboard-layout">
+
+        <aside class="sidebar">
+
+            <a href="{% url 'mainapp:dashboard' %}"
+               class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                Dashboard
+            </a>
+
+            <a href="{% url 'mainapp:mycourses' %}"
+               class="sidebar-link {% if request.resolver_match.url_name == 'my_courses' %}active{% endif %}">
+                My Courses
+            </a>
+
+            <a href="{% url 'mainapp:settings' %}"
+               class="sidebar-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                Settings
+            </a>
+
+            <a href="{% url 'mainapp:logout' %}" class="sidebar-link logout" onclick="return confirmLogout();">
+                Logout
+            </a>
+
+        </aside>
+
+
+        <main class="main-content">
+
+            {% block content %}
+            {% endblock %}
+
+        </main>
+
+    </div>
+    <script>
+      function confirmLogout() {
+        return confirm("Are you sure you want to logout?");
+      }
+    </script>  
+</body>
+</html>

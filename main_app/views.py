@@ -1,11 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
-from .models import Profile
+from django.db.models import Count, Q
+
+from .models import Profile, EnrolledCourse, Course
 from .utils import check_field_values
+from .forms import UserUpdateForm, ProfileUpdateForm
 
 
 def home_view(request):
@@ -68,9 +71,90 @@ def logout_view(request):
     logout(request)
     return redirect("mainapp:login")
 
+
+@never_cache
+@login_required(login_url="srtapp:login")
+def courses_view(request):
+    pass
+
+
 @never_cache
 @login_required(login_url='mainapp:login')
 def dashboard(request):
     if request.user.profile.is_instructor:
         return render(request, "main_app/instructor/dashboard.html")
-    return render(request, "main_app/student/dashboard.html")
+
+    user = (
+        User.objects.select_related('profile')
+        .prefetch_related('profile__enrolled_courses__course')
+        .annotate(
+            enrolled_courses=Count('profile__enrolled_courses'),
+            completed_courses=Count('profile__enrolled_courses', filter=Q(profile__enrolled_courses__is_completed=True)),
+            ongoing_courses=Count('profile__enrolled_courses', filter=Q(profile__enrolled_courses__is_completed=False))
+        )
+        .get(id=request.user.id)
+    )
+
+    context = {
+        'user':user
+    }
+
+    return render(request, "main_app/student/dashboard.html", context=context)
+
+
+@never_cache
+@login_required(login_url="srtapp:login")
+def mycourses_view(request):
+    queryset = EnrolledCourse.objects.filter(student__user_id=request.user.id).select_related('course')
+
+    if request.method == "GET":
+        return render(request, "main_app/student/mycourses.html", context={'enrolled_courses': queryset})
+    
+    elif request.method == "POST":
+        enrolled_course_id = request.POST.get("enrolled_course_id")
+
+        EnrolledCourse.objects.filter(id=enrolled_course_id, profile=request.user.profile).delete()
+        messages.success(request, "Course Dropped successfully.")
+
+        return render(request, "main_app/student/mycourses.html", context={'enrolled_courses': queryset})
+
+
+@never_cache
+@login_required(login_url="srtapp:login")
+def settings_view(request):
+    """
+    Handles displaying the user's current info and updating their profile (First Name, Last Name, Email and Avatar) on form submission
+    """
+
+    if request.method == "POST":
+        user_form = UserUpdateForm(
+            request.POST,
+            instance=request.user,
+        )
+
+        profile_form = ProfileUpdateForm(
+            request.POST,
+            request.FILES,
+            instance=request.user.profile,
+        )
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+
+            return redirect("mainapp:settings")
+
+    else:
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=request.user.profile)
+
+    context = {
+        "user_form": user_form,
+        "profile_form": profile_form,
+    }
+
+    return render(
+        request,
+        "main_app/student/settings.html",
+        context=context
+    )

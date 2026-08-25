@@ -1,0 +1,286 @@
+{% extends "main_app/student/base.html" %}
+
+{% block title %}My Courses | SRT Academy{% endblock %}
+
+{% block content %}
+
+<style>
+    .page-header {
+        margin-bottom: 30px;
+    }
+
+    .page-header h1 {
+        color: #111827;
+        margin-bottom: 10px;
+    }
+
+    .page-header p {
+        color: #6b7280;
+        font-size: 18px;
+    }
+
+    /* Course Grid */
+
+    .course-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+    }
+
+    .course-card {
+        background-color: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-card h2 {
+        color: #111827;
+        margin-bottom: 15px;
+    }
+
+    .course-card p {
+        color: #6b7280;
+        margin-bottom: 10px;
+    }
+
+    /* Progress Bar */
+
+    .progress-container {
+        margin: 20px 0;
+    }
+
+    .progress-label {
+        color: #374151;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .progress {
+        height: 10px;
+        background-color: #e5e7eb;
+        border-radius: 10px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background-color: #1f2937;
+        border-radius: 10px;
+    }
+
+    /* Buttons */
+
+    .actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+    }
+
+    .continue-btn,
+    .drop-btn {
+        text-decoration: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .continue-btn {
+        background-color: #1f2937;
+        color: white;
+    }
+
+    .continue-btn:hover {
+        background-color: #374151;
+    }
+
+    .drop-btn {
+        background-color: #e5e7eb;
+        color: #111827;
+    }
+
+    .drop-btn:hover {
+        background-color: #d1d5db;
+    }
+
+    /* Messages */
+
+    .success {
+        margin-bottom: 20px;
+        color: green;
+    }
+
+    /* No Courses */
+
+    .no-courses {
+        width: 100%;
+        min-height: 350px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+
+        gap: 16px;
+    }
+
+    .no-courses h3 {
+        font-size: 32px;
+        color: #6b7280;
+    }
+
+    .no-courses a {
+        font-size: 1.4em;
+        color: #111827;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .no-courses a:hover {
+        text-decoration: underline;
+    }
+
+
+    /* Responsive */
+
+    @media (max-width: 700px) {
+        .course-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+
+<div class="page-header">
+
+    <h1>My Courses</h1>
+
+    <p>
+        Continue learning and track your progress.
+    </p>
+
+</div>
+
+
+{% if messages %}
+
+    <div class="success">
+
+        {% for message in messages %}
+
+            <small>{{ message }}</small>
+
+            <br>
+
+        {% endfor %}
+
+    </div>
+
+{% endif %}
+
+
+{% if enrolled_courses %}
+
+    <div class="course-grid">
+
+        {% for enrolled_course in enrolled_courses %}
+
+            <div class="course-card">
+
+                <h2>
+                    {{ enrolled_course.course.title }}
+                </h2>
+
+                <p>
+                    {{ enrolled_course.course.description }}
+                </p>
+
+                <p>
+                    Last accessed:
+                    {{ enrolled_course.last_accessed_at|date:"F j, Y" }}
+                </p>
+
+
+                {% if not enrolled_course.is_completed %}
+
+                    <div class="actions">
+
+                        <a href="#" class="continue-btn">
+                            Continue
+                        </a>
+
+
+                        <form
+                            method="POST"
+                            onsubmit="return confirmDrop();"
+                        >
+
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="enrolled_course_id"
+                                value="{{ enrolled_course.id }}"
+                            >
+
+                            <button
+                                type="submit"
+                                class="drop-btn"
+                            >
+                                Drop Course
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="actions">
+
+                        <a href="#" class="continue-btn">
+                            Get Certificate
+                        </a>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+
+{% else %}
+
+    <div class="no-courses">
+
+        <h3>
+            You don't have any courses.
+        </h3>
+
+        <a href="{% url 'mainapp:courses' %}">
+            Find a Course
+        </a>
+
+    </div>
+
+{% endif %}
+
+
+<script>
+
+    function confirmDrop() {
+
+        return confirm(
+            "Are you sure you want to drop this course?"
+        );
+
+    }
+
+</script>
+
+{% endblock %}

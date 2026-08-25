@@ -1,0 +1,465 @@
+{% extends "main_app/student/base.html" %}
+
+{% block title %}Settings | SRT Academy{% endblock %}
+
+{% block content %}
+
+<style>
+    .page-header {
+        margin-bottom: 30px;
+    }
+
+    .page-header h1 {
+        color: #111827;
+        margin-bottom: 10px;
+    }
+
+    .page-header p {
+        color: #6b7280;
+        font-size: 18px;
+    }
+
+    .settings-card {
+        background-color: white;
+        max-width: 700px;
+        padding: 35px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .settings-section {
+        margin-bottom: 30px;
+    }
+
+    .settings-section h2 {
+        color: #111827;
+        font-size: 20px;
+        margin-bottom: 25px;
+    }
+
+    /* =========================
+       PROFILE PICTURE
+    ========================= */
+
+    .avatar-section {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .avatar-container {
+        position: relative;
+        width: 110px;
+        height: 110px;
+        flex-shrink: 0;
+    }
+
+    .avatar {
+        width: 110px;
+        height: 110px;
+
+        border-radius: 50%;
+        overflow: hidden;
+
+        background-color: #1f2937;
+        color: white;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 42px;
+        font-weight: 600;
+    }
+
+    .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Hide Django's file input */
+    .avatar-container input[type="file"] {
+        display: none;
+    }
+
+    /* Edit button */
+    .avatar-edit {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+
+        width: 34px;
+        height: 34px;
+
+        border-radius: 50%;
+        border: 3px solid white;
+
+        background-color: #1f2937;
+        color: white;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        cursor: pointer;
+
+        font-size: 16px;
+        line-height: 1;
+
+        transition: background-color 0.2s;
+    }
+
+    .avatar-edit:hover {
+        background-color: #374151;
+    }
+
+    .avatar-info {
+        margin-left: 20px;
+    }
+
+    .avatar-info h3 {
+        color: #111827;
+        margin-bottom: 5px;
+    }
+
+    .avatar-info p {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 3px;
+    }
+
+
+    /* =========================
+       FORM
+    ========================= */
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        color: #374151;
+        margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+
+        font-size: 16px;
+        font-family: Arial, sans-serif;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #1f2937;
+    }
+
+    .help-text {
+        display: block;
+        color: #6b7280;
+        font-size: 13px;
+        margin-top: 6px;
+    }
+
+    .error {
+        display: block;
+        color: #dc2626;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    .non-field-errors {
+        color: #dc2626;
+        margin-bottom: 20px;
+    }
+
+    .save-btn {
+        padding: 12px 25px;
+
+        border-radius: 8px;
+        border: none;
+
+        cursor: pointer;
+
+        font-size: 16px;
+
+        background-color: #1f2937;
+        color: white;
+
+        transition: background-color 0.2s;
+    }
+
+    .save-btn:hover {
+        background-color: #374151;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 700px) {
+        .settings-card {
+            padding: 25px;
+        }
+
+        .avatar-section {
+            align-items: flex-start;
+        }
+    }
+</style>
+
+
+<div class="page-header">
+
+    <h1>Account Settings</h1>
+
+    <p>
+        Manage your account preferences and profile.
+    </p>
+
+</div>
+
+
+<div class="settings-card">
+
+    <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+
+        {% if user_form.non_field_errors %}
+            <div class="non-field-errors">
+                {% for error in user_form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+
+        {% if profile_form.non_field_errors %}
+            <div class="non-field-errors">
+                {% for error in profile_form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+
+        <div class="settings-section">
+
+            <h2>Profile</h2>
+
+
+            <!-- Profile Picture -->
+
+            <div class="avatar-section">
+
+    <div class="avatar-container">
+
+        <div class="avatar" id="avatarPreview">
+
+            {% if request.user.profile.avatar %}
+
+                <img
+                    src="{{ request.user.profile.avatar.url }}"
+                    alt="Profile Picture"
+                >
+
+            {% else %}
+
+                {{ request.user.username|first|upper }}
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Hidden file input -->
+
+        <input
+            type="file"
+            name="{{ profile_form.avatar.html_name }}"
+            id="{{ profile_form.avatar.id_for_label }}"
+            accept="image/*"
+        >
+
+
+        <!-- Edit button -->
+
+        <label
+            for="{{ profile_form.avatar.id_for_label }}"
+            class="avatar-edit"
+            title="Change profile picture"
+        >
+            ✎
+        </label>
+
+    </div>
+
+
+    <div class="avatar-info">
+
+        <h3>Profile Picture</h3>
+
+        <p>JPG, PNG or other image formats.</p>
+        <p>Maximum size: 5 MB.</p>
+
+    </div>
+
+</div>
+
+
+            {% for error in profile_form.avatar.errors %}
+                <small class="error">{{ error }}</small>
+            {% endfor %}
+
+
+            <!-- First Name -->
+
+            <div class="form-group">
+
+                <label for="{{ user_form.first_name.id_for_label }}">
+                    First Name
+                </label>
+
+                {{ user_form.first_name }}
+
+                {% for error in user_form.first_name.errors %}
+                    <small class="error">{{ error }}</small>
+                {% endfor %}
+
+            </div>
+
+
+            <!-- Last Name -->
+
+            <div class="form-group">
+
+                <label for="{{ user_form.last_name.id_for_label }}">
+                    Last Name
+                </label>
+
+                {{ user_form.last_name }}
+
+                {% for error in user_form.last_name.errors %}
+                    <small class="error">{{ error }}</small>
+                {% endfor %}
+
+            </div>
+
+
+            <!-- Email -->
+
+            <div class="form-group">
+
+                <label for="{{ user_form.email.id_for_label }}">
+                    Email
+                </label>
+
+                {{ user_form.email }}
+
+                {% for error in user_form.email.errors %}
+                    <small class="error">{{ error }}</small>
+                {% endfor %}
+
+            </div>
+
+
+            <!-- Bio -->
+
+            <div class="form-group">
+
+                <label for="{{ profile_form.bio.id_for_label }}">
+                    Bio
+                </label>
+
+                {{ profile_form.bio }}
+
+                <small class="help-text">
+                    Maximum 160 characters.
+                </small>
+
+                {% for error in profile_form.bio.errors %}
+                    <small class="error">{{ error }}</small>
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <button type="submit" class="save-btn">
+            Save Changes
+        </button>
+
+    </form>
+
+</div>
+
+
+<script>
+
+    const avatarInput = document.getElementById(
+        "{{ profile_form.avatar.id_for_label }}"
+    );
+
+    const avatarPreview = document.getElementById("avatarPreview");
+
+    avatarInput.addEventListener("change", function () {
+
+        const file = this.files[0];
+
+        if (!file) {
+            return;
+        }
+
+
+        // 5 MB limit
+
+        const maxSize = 5 * 1024 * 1024;
+
+        if (file.size > maxSize) {
+
+            alert("The image must be 5 MB or smaller.");
+
+            this.value = "";
+
+            return;
+        }
+
+
+        // Preview selected image
+
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+
+            avatarPreview.innerHTML = `
+                <img
+                    src="${event.target.result}"
+                    alt="Profile Picture"
+                >
+            `;
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
+
+</script>
+
+{% endblock %}

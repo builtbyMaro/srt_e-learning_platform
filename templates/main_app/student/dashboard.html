@@ -1,12 +1,244 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Student!!</h1>
-    <a href="{% url 'mainapp:logout' %}">Logout</a>
-</body>
-</html>
+{% extends "main_app/student/base.html" %}
+
+{% block title %}Dashboard | SRT Academy{% endblock %}
+
+{% block content %}
+
+<style>
+    .welcome-card {
+        background-color: white;
+        padding: 35px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+    }
+
+    .welcome-card h1 {
+        color: #111827;
+        margin-bottom: 15px;
+    }
+
+    .welcome-card p {
+        color: #6b7280;
+        font-size: 18px;
+    }
+
+    .name {
+        text-transform: capitalize;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 35px;
+    }
+
+    .stat-card {
+        background-color: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card h3 {
+        color: #6b7280;
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .stat-card p {
+        color: #111827;
+        font-size: 30px;
+        font-weight: bold;
+    }
+
+    .section-title {
+        color: #111827;
+        margin-bottom: 20px;
+    }
+
+    .course-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+    }
+
+    .course-card {
+        background-color: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-card h2 {
+        color: #111827;
+        margin-bottom: 15px;
+    }
+
+    .course-card p {
+        color: #6b7280;
+        margin-bottom: 20px;
+    }
+
+    .progress {
+        background-color: #e5e7eb;
+        height: 10px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .progress-bar {
+        background-color: #1f2937;
+        height: 100%;
+        width: 65%;
+        border-radius: 10px;
+    }
+
+    .continue-btn {
+        display: inline-block;
+        text-decoration: none;
+        background-color: #1f2937;
+        color: white;
+        padding: 12px 25px;
+        border-radius: 8px;
+    }
+
+    .continue-btn:hover {
+        background-color: #374151;
+    }
+
+    .empty-courses {
+        background-color: white;
+        padding: 35px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        grid-column: 1 / -1;
+    }
+
+    .empty-courses h3 {
+        color: #111827;
+        margin-bottom: 10px;
+    }
+
+    .empty-courses p {
+        color: #6b7280;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 700px) {
+        .stats-grid,
+        .course-list {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+
+<div class="welcome-card">
+
+    <h1>
+        Welcome back,
+        <span class="name">
+            {{ user.first_name }} {{ user.last_name }}
+        </span>
+    </h1>
+
+    <p>
+        Continue your learning journey and keep building your skills.
+    </p>
+
+</div>
+
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <h3>Courses Enrolled</h3>
+        <p>{{user.enrolled_courses}}</p>
+    </div>
+
+    <div class="stat-card">
+        <h3>Completed Courses</h3>
+        <p>{{user.completed_courses}}</p>
+    </div>
+
+</div>
+
+
+<h2 class="section-title">
+    Continue Learning
+</h2>
+
+<div class="course-list">
+
+    {% if user.ongoing_courses %}
+
+        {% for enrolledcourse in user.profile.enrolled_courses.all|slice:":2" %}
+            {% if not enrolledcourse.is_completed %}
+
+                <div class="course-card">
+
+                    <h2>{{ enrolledcourse.course.title }}</h2>
+
+                    <p>{{ enrolledcourse.course.description }}</p>
+
+                    <div class="progress">
+                        <div class="progress-bar"></div>
+                    </div>
+
+                    <a href="#" class="continue-btn">
+                        Continue
+                    </a>
+
+                </div>
+
+            {% endif %}
+        {% endfor %}
+
+
+    {% elif user.enrolled_courses %}
+
+        <!-- User has enrolled courses, but none are ongoing -->
+
+        <div class="empty-courses">
+
+            <h3>You've completed all your courses!</h3>
+
+            <p>
+                Ready to learn something new? Explore more courses.
+            </p>
+
+            <a href="{% url 'mainapp:courses' %}" class="continue-btn">
+                Start a New Course
+            </a>
+
+        </div>
+
+
+    {% else %}
+
+        <!-- User has never enrolled in a course -->
+
+        <div class="empty-courses">
+
+            <h3>No courses yet</h3>
+
+            <p>
+                Explore our courses and start your learning journey.
+            </p>
+
+            <a href="{% url 'mainapp:courses' %}" class="continue-btn">
+                Explore Courses
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</div>
+
+{% endblock %}
